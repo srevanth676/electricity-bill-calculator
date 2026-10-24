@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Bill Calculator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #dbeafe, #ede9fe);
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 35px auto;
+            padding: 28px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px #00000018;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-top: 24px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            display: none;
+            margin-top: 24px;
+            padding: 18px;
+            background: #eff6ff;
+            border-radius: 10px;
+            border-left: 5px solid #2563eb;
+        }
+
+        .total {
+            color: #15803d;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc2626;
+            margin-top: 12px;
+        }
+
+        .note {
+            margin-top: 22px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #64748b;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 15px auto;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>⚡ Electricity Bill Calculator</h1>
+
+        <p class="subtitle">
+            Calculate your estimated electricity bill
+            using units consumed.
+        </p>
+
+        <label for="units">Enter Electricity Units (kWh):</label>
+
+        <input
+            type="number"
+            id="units"
+            min="0"
+            step="any"
+            placeholder="Example: 150"
+        >
+
+        <button onclick="calculateBill()">
+            Calculate Bill
+        </button>
+
+        <p id="error" class="error"></p>
+
+        <div id="result" class="result" aria-live="polite">
+            <h2>Bill Details</h2>
+
+            <p id="unitDetails"></p>
+
+            <p>Estimated Electricity Bill:</p>
+
+            <p id="totalBill" class="total"></p>
+
+            <hr>
+
+            <h3>Calculation Breakdown</h3>
+
+            <div id="breakdown"></div>
+        </div>
+
+        <p class="note">
+            Note: This is an educational project using sample
+            rates. Actual electricity tariffs, fixed charges,
+            taxes and other adjustments may differ.
+        </p>
+    </div>
+
+    <script>
+        function calculateBill() {
+
+            const input = document.getElementById("units");
+            const units = Number(input.value);
+
+            const result = document.getElementById("result");
+            const error = document.getElementById("error");
+
+            error.textContent = "";
+            result.style.display = "none";
+
+            if (input.value.trim() === "" ||
+                !Number.isFinite(units) ||
+                units < 0) {
+
+                error.textContent =
+                    "Please enter a valid non-negative number of units.";
+                return;
+            }
+
+            let bill = 0;
+            let breakdown = "";
+
+            // Sample slab 1: First 100 units at Rs. 2
+            const slab1 = Math.min(units, 100);
+            bill += slab1 * 2;
+
+            if (slab1 > 0) {
+                breakdown +=
+                    `<p>0–100 units: ${slab1} × ₹2 = ₹${(slab1 * 2).toFixed(2)}</p>`;
+            }
+
+            // Sample slab 2: Units from 101 to 200 at Rs. 3
+            const slab2 = Math.min(Math.max(units - 100, 0), 100);
+            bill += slab2 * 3;
+
+            if (slab2 > 0) {
+                breakdown +=
+                    `<p>101–200 units: ${slab2} × ₹3 = ₹${(slab2 * 3).toFixed(2)}</p>`;
+            }
+
+            // Sample slab 3: Units above 200 at Rs. 5
+            const slab3 = Math.max(units - 200, 0);
+            bill += slab3 * 5;
+
+            if (slab3 > 0) {
+                breakdown +=
+                    `<p>Above 200 units: ${slab3} × ₹5 = ₹${(slab3 * 5).toFixed(2)}</p>`;
+            }
+
+            document.getElementById("unitDetails").textContent =
+                `Units Consumed: ${units} kWh`;
+
+            document.getElementById("totalBill").textContent =
+                `₹${bill.toFixed(2)}`;
+
+            document.getElementById("breakdown").innerHTML =
+                breakdown || "<p>No units consumed; bill is ₹0.00.</p>";
+
+            result.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
